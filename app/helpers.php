@@ -64,7 +64,7 @@ function navigator(
         }
 
         if (isset($navigators[$nav['pid']])) {
-            $navigators[$nav['pid']]['nodes'][] = $nav;
+            $navigators[$nav['pid']]['nodes'][] = &$nav;
         }
     }
 
@@ -188,4 +188,9 @@ function userNotificationCount()
     }
 
     return count(Auth::user()->unreadNotifications);
+}
+
+function subDocuments($pid)
+{
+    return \App\Repositories\Document::where('pid', $pid)->select('id', 'title')->get();
 }
