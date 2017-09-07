@@ -1,25 +1,27 @@
 @extends('layouts.default')
-@section('container-style', 'container')
+@section('container-style', 'container-fluid')
 @section('title', $project->name)
 @section('content')
     @include('layouts.navbar')
 
     <div class="row marketing">
-        <div class="col-lg-12">
-            <div class="col-lg-3">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="col-lg-3 col-md-3 col-sm-3">
 
-                <ul class="nav nav-pills nav-stacked wz-left-nav">
-                    <li class="{{ $pageID === 0 ? 'active' : '' }}">
+                <ul class="nav nav-pills nav-stacked wz-left-nav {{-- hide --}}">
+                    <li class="{{ $pageID === 0 ? 'active' : '' }} wz-has-child">
                         <a href="{{ wzRoute('project:home', ['id' => $project->id]) }}" class="wz-nav-item">
-                            <span class="glyphicon glyphicon-th-large"></span>
                             {{ $project->name }}
                             @include('components.project-tag', ['proj' => $project])
                         </a>
+                        <ul class="wz-auto-open">
+                            @include('components.navbar', ['navbars' => $navigators])
+                        </ul>
                     </li>
-                    @include('components.navbar', ['navbars' => $navigators])
+
                 </ul>
             </div>
-            <div class="col-lg-9">
+            <div class="col-lg-9 col-md-9 col-sm-9">
                 <nav class="wz-page-control clearfix">
                     <div class="btn-group wz-nav-control">
                         @can('page-add', $project)
@@ -60,27 +62,14 @@
 @endsection
 
 @push('script')
+    <script src="/assets/js/navigator-tree.js?{{ resourceVersion() }}"></script>
     <script>
         // 侧边导航自动折叠
         $(function () {
-            var left_nav = $('.wz-left-nav');
-            left_nav.find('li.wz-has-child').children('ul').hide();
-            left_nav.find('li.wz-has-child').prepend('<a href="javascript:;" class="wz-nav-fold glyphicon glyphicon-plus"></a>');
-            left_nav.find('li.wz-has-child').find('.wz-nav-fold')
-                .on('click', function () {
-                    if ($(this).hasClass('glyphicon-plus')) {
-                        $(this).removeClass('glyphicon-plus').addClass('glyphicon-minus');
-                    } else {
-                        $(this).removeClass('glyphicon-minus').addClass('glyphicon-plus');
-                    }
-
-                    $(this).parent().children('ul').slideToggle('fast');
-                });
-            left_nav.find('li.active').parents('ul').show();
-            left_nav.find('li.active')
-                .parents('.nav')
-                .find('li:has(.active) >.wz-nav-fold')
-                .removeClass('glyphicon-plus').addClass('glyphicon-minus');
+            $.wz.navigator_tree($('.wz-left-nav'));
+//            window.setTimeout(function () {
+//                $('.wz-left-nav').removeClass('hide').addClass('animated fadeIn');
+//            }, 20);
         });
     </script>
 @endpush
